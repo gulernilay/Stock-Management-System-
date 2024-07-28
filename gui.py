@@ -65,7 +65,7 @@ class LoginScreen(QMainWindow):
         self.password_entry.setStyleSheet("border: 1px solid black;")
 
         # Etiketleri kalın yap
-        label_style = "font-weight: bold; color: black; font-size: 14px"
+        label_style = "font-weight: bold; color: black; font-size: 18px;padding-left: 65px;"
         self.form_layout.addRow(QLabel("Kullanıcı Adı :"), self.username_entry)
         self.form_layout.addRow(QLabel("Şifre :"), self.password_entry)
         self.form_layout.itemAt(0, QFormLayout.LabelRole).widget().setStyleSheet(label_style)
@@ -74,7 +74,7 @@ class LoginScreen(QMainWindow):
         # Giriş butonunu ekle ve stil ayarlarını yap
         self.login_button = QPushButton("Giriş")
         self.login_button.setFixedWidth(pixmap.width())
-        self.login_button.setStyleSheet("font-weight: bold; color: black; border: 1px solid black;")
+        self.login_button.setStyleSheet("font-weight: bold;font-size: 18px; color: black; border: 1px solid black;")
         self.login_button.clicked.connect(self.login)
         self.form_layout.addWidget(self.login_button)
 

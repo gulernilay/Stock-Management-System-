@@ -1,0 +1,241 @@
+import sys
+from PyQt5.QtWidgets import (
+    QApplication, QMainWindow, QWidget, QVBoxLayout, QLabel, QLineEdit,
+    QPushButton, QFormLayout, QMessageBox, QComboBox, QTableWidget, QTableWidgetItem, QHBoxLayout
+)
+from PyQt5.QtCore import Qt
+from Product import Bavul, Cuzdan, Kemer, Canta
+from Stock import Stock
+
+class RenovationAdd(QMainWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # Initialize stock management system
+        self.stock = Stock()
+
+        # Main window settings
+        self.setWindowTitle("Gökhan Çanta Stok Yönetim Sistemi")
+        self.setGeometry(150, 150, 900, 700)
+        self.setStyleSheet("font-weight: bold;background-color:#E6E6FA;")
+
+        # Central widget and layout
+        self.central_widget = QWidget()
+        self.setCentralWidget(self.central_widget)
+        self.layout = QVBoxLayout()
+        self.central_widget.setLayout(self.layout)
+
+        # Create horizontal layout for the title and back button
+        self.header_layout = QHBoxLayout()
+        
+        # Title label
+        self.title_label = QLabel("Tamirat Kayıt Formu")
+        self.title_label.setStyleSheet("font-size: 22px; font-weight: bold;")
+        self.title_label.setAlignment(Qt.AlignCenter)
+        
+        # Back Button
+        self.back_button = QPushButton("Geri")
+        self.back_button.clicked.connect(self.go_back)
+        self.back_button.setStyleSheet("font-weight: bold;")
+        self.back_button.setMinimumSize(80, 25)  # Minimum Width: 80 pixels, Minimum Height: 25 pixels
+        self.back_button.setMaximumSize(120, 35)  # Maximum Width: 120 pixels, Maximum Height: 35 pixels
+
+        # Add widgets to header layout
+        self.header_layout.addWidget(self.title_label)
+        self.header_layout.addWidget(self.back_button)
+
+        # Add header layout to the main layout
+        self.layout.addLayout(self.header_layout)
+
+        # Product entry form
+        self.form_layout = QFormLayout()
+        
+        # Username Entry
+        self.username_entry = QLineEdit()
+        username_label = QLabel("Müşteri Adı Soyadı:")
+        username_label.setStyleSheet("font-weight: bold;")
+        self.form_layout.addRow(username_label, self.username_entry)
+        
+        self.tamırat_entry = QLineEdit()
+        tamırat_label = QLabel("Tamirat No:")
+        tamırat_label.setStyleSheet("font-weight: bold;")
+        self.form_layout.addRow(tamırat_label, self.tamırat_entry)
+        
+        # Product Type ComboBox
+        self.product_type = QComboBox()
+        self.product_type.addItems(["Bavul", "Cuzdan", "Kemer", "Canta"])
+        self.product_type.currentIndexChanged.connect(self.on_product_type_changed)
+        product_type_label = QLabel("Ürün Türü:")
+        product_type_label.setStyleSheet("font-weight: bold;")
+        self.form_layout.addRow(product_type_label, self.product_type)
+
+        # Other form entries
+        #self.name_entry = QLineEdit()
+        #name_label = QLabel("Ürün Adı:")
+        #name_label.setStyleSheet("font-weight: bold;")
+        #self.form_layout.addRow(name_label, self.name_entry)
+
+        self.color_entry = QComboBox()
+        self.color_entry.addItems([
+            "Beyaz", "Gri", "Siyah", "Kırmızı", "Yeşil", "Mavi", "Sarı", "Mor", "Turuncu", "Pembe", "Kahverengi",
+            "Bej", "Bordo", "Fuşya", "Krem", "Lacivert", "Altın", "Gümüş", "Şampanya", "Zeytin Yeşili", "Lavanta",
+            "Menekşe", "Turkuaz", "İndigo", "Kömür", "Antrasit", "Safir", "Yakut", "Zümrüt", "Amber", "Deniz Mavisi",
+            "Şeftali", "Somon", "Kabak", "Camgöbeği", "Ametist", "Koyu Yeşil", "Parlament Mavisi", "Gök Mavisi",
+            "Bebek Mavisi", "Neon Yeşil", "Neon Turuncu", "Neon Pembe", "Neon Sarı", "Kül", "Kestane", "Mercan",
+            "Kiremit", "Hardal", "Toprak", "Çikolata", "Gökyüzü Mavisi", "Erik", "Vişne", "Yosun Yeşili", "Mint Yeşili",
+            "Pastel Pembe", "Pastel Mavi", "Pastel Yeşil", "Pastel Sarı", "Fıstık Yeşili", "Adaçayı", "Deniz Köpüğü",
+            "Buz Mavisi", "Gökkuşağı"
+        ])
+        color_label = QLabel("Renk:")
+        color_label.setStyleSheet("font-weight: bold;")
+        self.form_layout.addRow(color_label, self.color_entry)
+
+        self.brand_entry = QComboBox()
+        self.brand_entry.addItems([
+            "Fossil", "Grande", "Louis Vuitton", "Gucci", "Prada", "Chanel", "Hermès", "Dior", "Burberry", "Versace",
+            "Balenciaga", "Valentino", "Givenchy", "Dolce & Gabbana", "Fendi", "Bvlgari", "Salvatore Ferragamo",
+            "Giorgio Armani", "Tory Burch", "Kate Spade", "Michael Kors", "Coach", "Ralph Lauren", "Tommy Hilfiger",
+            "Calvin Klein", "Hugo Boss", "Lacoste", "Diesel", "Levi's", "Guess", "Mango", "Zara", "H&M", "Uniqlo",
+            "Banana Republic", "Gap", "Old Navy", "Forever 21", "Express", "Abercrombie & Fitch", "American Eagle",
+            "Urban Outfitters", "Free People", "Anthropologie", "Patagonia", "The North Face", "Columbia", "Lululemon",
+            "Adidas", "Nike", "Puma", "Reebok", "New Balance", "Under Armour", "Skechers", "Converse", "Vans",
+            "Timberland", "Dr. Martens", "UGG", "Clarks", "Birkenstock"
+        ])
+        brand_label = QLabel("Marka:")
+        brand_label.setStyleSheet("font-weight: bold;")
+        self.form_layout.addRow(brand_label, self.brand_entry)
+
+        self.stock_code_entry = QLineEdit()
+        stock_code_label = QLabel("Stok Kodu:")
+        stock_code_label.setStyleSheet("font-weight: bold;")
+        self.form_layout.addRow(stock_code_label, self.stock_code_entry)
+
+        self.date_entry = QLineEdit()
+        date_label = QLabel("Tamirat Alış Tarihi:")
+        date_label.setStyleSheet("font-weight: bold;")
+        self.form_layout.addRow(date_label, self.date_entry)
+
+        #self.stock_amount_entry = QLineEdit()
+        #stock_amount_label = QLabel("Stok Miktarı:")
+        #stock_amount_label.setStyleSheet("font-weight: bold;")
+        #self.form_layout.addRow(stock_amount_label, self.stock_amount_entry)
+
+        self.size_entry = QComboBox()
+        self.size_entry.addItems([
+            "Kabin Boy", "Küçük (20-25 cm)", "Orta (26-35 cm)", "Büyük (36-45 cm)", "Ekstra Büyük (46 cm ve üstü)"
+        ])
+        self.size_entry.setVisible(False)  # Initially hidden
+        size_label = QLabel("Boyut (Sadece Bavul için):")
+        size_label.setStyleSheet("font-weight: bold;")
+        self.form_layout.addRow(size_label, self.size_entry)
+
+        self.height_entry = QLineEdit()
+        self.height_entry.setVisible(False)  # Initially hidden
+        height_label = QLabel("Uzunluk (Sadece Kemer için):")
+        height_label.setStyleSheet("font-weight: bold;")
+        self.form_layout.addRow(height_label, self.height_entry)
+
+        self.type_entry = QComboBox()
+        self.type_entry.addItems([
+            "Kadın Çantası", "Spor Çantası", "Bel Çantası", "Sırt Çantası", "El Çantası", "Omuz Çantası",
+            "Postacı Çantası", "Portföy Çantası", "Clutch Çanta", "Tote Çanta", "Kese Çanta", "Makyaj Çantası",
+            "İş Çantası", "Laptop Çantası", "Tablet Çantası", "Bebek Çantası", "Plaj Çantası", "Alışveriş Çantası",
+            "Valiz", "Hafta Sonu Çantası", "Deri Çanta", "Kanvas Çanta", "Çapraz Askılı Çanta",
+            "Mini Çanta", "Maxi Çanta", "Kapitone Çanta", "Dokuma Çanta"
+        ])
+        self.type_entry.setVisible(False)  # Initially hidden
+        type_label = QLabel("Tür (Sadece Çanta için):")
+        type_label.setStyleSheet("font-weight: bold;")
+        self.form_layout.addRow(type_label, self.type_entry)
+
+        # Add Product Button
+        self.add_button = QPushButton("Tamirat Ürün Ekle")
+        self.add_button.clicked.connect(self.add_product)
+        self.add_button.setStyleSheet("font-weight: bold;")
+        self.form_layout.addWidget(self.add_button)
+
+        self.layout.addLayout(self.form_layout)
+
+        # Product listing section
+        self.table = QTableWidget()
+        self.table.setColumnCount(9)
+        self.table.setHorizontalHeaderLabels(["Müşteri Adı Soyadı", "Renk", "Marka", "Stok Kodu", "Tarih", "Stok Miktarı", "Boyut", "Uzunluk", "Tür"])
+        header = self.table.horizontalHeader()
+        header.setStyleSheet("font-weight: bold;")
+        self.layout.addWidget(self.table)
+
+        # Update Table Button
+        self.update_button = QPushButton("Ürün Listele")
+        self.update_button.clicked.connect(self.update_table)
+        self.update_button.setStyleSheet("font-weight: bold;")
+        self.layout.addWidget(self.update_button)
+
+    def on_product_type_changed(self, index):
+        product_type = self.product_type.currentText()
+        self.type_entry.setVisible(product_type == "Canta")
+        self.size_entry.setVisible(product_type == "Bavul")
+        self.height_entry.setVisible(product_type == "Kemer")
+
+    def add_product(self):
+        username = self.username_entry.text()
+        tamırat=self.tamırat_entry.text()
+        product_type = self.product_type.currentText()
+        #name = self.name_entry.text()
+        color = self.color_entry.currentText()
+        brand = self.brand_entry.currentText()
+        stock_code = self.stock_code_entry.text()
+        date = self.date_entry.text()
+        size = self.size_entry.currentText() if product_type == "Bavul" else None
+        height = self.height_entry.text() if product_type == "Kemer" else None
+        type_ = self.type_entry.currentText() if product_type == "Canta" else None
+
+        if product_type == "Bavul":
+            product = Bavul(username, tamırat,color, brand, stock_code, date, size)
+        elif product_type == "Cuzdan":
+            product = Cuzdan(username, tamırat,color, brand, stock_code, date)
+        elif product_type == "Kemer":
+            product = Kemer(username,tamırat, color, brand, stock_code, date, height)
+        elif product_type == "Canta":
+            product = Canta(username,tamırat, color, brand, stock_code, date,  type_)
+        else:
+            QMessageBox.warning(self, "Hata", "Geçersiz ürün türü!")
+            return
+
+        self.stock.add(product)
+        QMessageBox.information(self, "Başarı", f"Ürün eklendi: {product}")
+
+    def update_table(self):
+        self.table.setRowCount(0)
+        for product in self.stock.products.values():
+            row_position = self.table.rowCount()
+            self.table.insertRow(row_position)
+            self.table.setItem(row_position, 0, QTableWidgetItem(product.username))
+            self.table.setItem(row_position, 1, QTableWidgetItem(product.tamırat))
+            self.table.setItem(row_position, 2, QTableWidgetItem(product.color))
+            self.table.setItem(row_position, 3, QTableWidgetItem(product.brand))
+            self.table.setItem(row_position, 4, QTableWidgetItem(product.stock_code))
+            self.table.setItem(row_position, 5, QTableWidgetItem(product.date))
+            if isinstance(product, Bavul):
+                self.table.setItem(row_position, 6, QTableWidgetItem(product.size))
+                self.table.setItem(row_position, 7, QTableWidgetItem(''))
+            elif isinstance(product, Cuzdan):
+                self.table.setItem(row_position, 6, QTableWidgetItem(''))
+                self.table.setItem(row_position, 7, QTableWidgetItem(''))
+            elif isinstance(product, Kemer): 
+                self.table.setItem(row_position, 6, QTableWidgetItem(str(product.height)))
+                self.table.setItem(row_position, 7, QTableWidgetItem(''))
+            elif isinstance(product, Canta):
+                self.table.setItem(row_position, 6, QTableWidgetItem(''))
+                self.table.setItem(row_position, 7, QTableWidgetItem(product.type_))
+    
+    def go_back(self):
+        from MainPage2 import MainApp  # Import inside the function
+        self.main_app = MainApp()  # Initialize the MainApp class
+        self.main_app.show()
+        self.close()
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = Renovation()
+    window.show()
+    sys.exit(app.exec_())

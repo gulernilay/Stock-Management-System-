@@ -1,9 +1,8 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QFormLayout, QMessageBox, QComboBox, QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QFormLayout, QComboBox, QTableWidget, QTableWidgetItem, QHBoxLayout
 from PyQt5.QtCore import Qt
 from Product import Bavul, Cuzdan, Kemer, Canta
 from Stock import Stock
-from PyQt5.QtGui import QPixmap, QPalette, QBrush
 
 class ShowProduct(QMainWindow):
     def __init__(self, parent=None):
@@ -23,9 +22,28 @@ class ShowProduct(QMainWindow):
         self.layout = QVBoxLayout()
         self.central_widget.setLayout(self.layout)
 
+        # Başlık ve geri butonu için yatay düzen
+        self.top_layout = QHBoxLayout()
+        self.title_label = QLabel("Stok Kontrol Ekranı")
+        self.title_label.setStyleSheet("font-size: 22px; font-weight: bold;")
+        self.title_label.setAlignment(Qt.AlignCenter)
+        self.top_layout.addWidget(self.title_label)
+
+        # Geri Butonu
+        self.back_button = QPushButton("Geri")
+        self.back_button.clicked.connect(self.go_back)
+        self.back_button.setStyleSheet("font-weight: bold;")
+        self.back_button.setMinimumSize(80, 25)  # Minimum Width: 80 pixels, Minimum Height: 25 pixels
+        self.back_button.setMaximumSize(120, 35)  # Maximum Width: 120 pixels, Maximum Height: 35 pixels
+        self.top_layout.addWidget(self.back_button)
+        self.top_layout.setStretch(0, 2)
+        self.top_layout.setStretch(1, 1)
+
+        # Yatay düzeni ana dikey düzenin başına ekleyin
+        self.layout.addLayout(self.top_layout)
+
         # Ürün ekleme bölümü
         self.form_layout = QFormLayout()
-
         # Ürün türü combobox ve etiketi
         self.product_type = QComboBox()
         self.product_type.addItems(["Bavul", "Cuzdan", "Kemer", "Canta"])
@@ -95,8 +113,6 @@ class ShowProduct(QMainWindow):
         self.update_button.clicked.connect(self.update_table)
         self.update_button.setStyleSheet("font-weight: bold;")
         self.layout.addWidget(self.update_button)
-        
-      
 
         # Ürün listeleme bölümü
         self.table = QTableWidget()
@@ -106,8 +122,6 @@ class ShowProduct(QMainWindow):
         header = self.table.horizontalHeader()
         header.setStyleSheet("font-weight: bold;")
         self.layout.addWidget(self.table)
-
-        
 
     def update_table(self):
         self.table.setRowCount(0)
@@ -132,6 +146,12 @@ class ShowProduct(QMainWindow):
             elif isinstance(product, Canta):
                 self.table.setItem(row_position, 6, QTableWidgetItem(''))
                 self.table.setItem(row_position, 7, QTableWidgetItem(product.type))
+
+    def go_back(self):
+        from MainPage2 import MainApp  # Import inside the function
+        self.main_app = MainApp()  # Initialize the MainApp class
+        self.main_app.show()
+        self.close()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
