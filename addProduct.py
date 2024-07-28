@@ -1,5 +1,8 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QFormLayout, QMessageBox, QComboBox, QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import (
+    QApplication, QMainWindow, QWidget, QVBoxLayout, QLabel, QLineEdit,
+    QPushButton, QFormLayout, QMessageBox, QComboBox, QTableWidget, QTableWidgetItem, QHBoxLayout
+)
 from PyQt5.QtCore import Qt
 from Product import Bavul, Cuzdan, Kemer, Canta
 from Stock import Stock
@@ -13,7 +16,7 @@ class StockManagerApp(QMainWindow):
 
         # Main window settings
         self.setWindowTitle("Gökhan Çanta Stok Yönetim Sistemi")
-        self.setGeometry(100, 100, 800, 600)
+        self.setGeometry(150, 150, 900, 700)
         self.setStyleSheet("font-weight: bold;background-color:#E6E6FA;")
 
         # Central widget and layout
@@ -21,6 +24,28 @@ class StockManagerApp(QMainWindow):
         self.setCentralWidget(self.central_widget)
         self.layout = QVBoxLayout()
         self.central_widget.setLayout(self.layout)
+
+        # Create horizontal layout for the title and back button
+        self.header_layout = QHBoxLayout()
+        
+        # Title label
+        self.title_label = QLabel("Ürün Ekleme Ekranı")
+        self.title_label.setStyleSheet("font-size: 22px; font-weight: bold;")
+        self.title_label.setAlignment(Qt.AlignCenter)
+        
+        # Back Button
+        self.back_button = QPushButton("Geri")
+        self.back_button.clicked.connect(self.go_back)
+        self.back_button.setStyleSheet("font-weight: bold;")
+        self.back_button.setMinimumSize(80, 25)  # Minimum Width: 80 pixels, Minimum Height: 25 pixels
+        self.back_button.setMaximumSize(120, 35)  # Maximum Width: 120 pixels, Maximum Height: 35 pixels
+
+        # Add widgets to header layout
+        self.header_layout.addWidget(self.title_label)
+        self.header_layout.addWidget(self.back_button)
+
+        # Add header layout to the main layout
+        self.layout.addLayout(self.header_layout)
 
         # Product entry form
         self.form_layout = QFormLayout()
@@ -57,9 +82,9 @@ class StockManagerApp(QMainWindow):
         self.size_entry.addItems([
             "Kabin Boy", "Küçük (20-25 cm)", "Orta (26-35 cm)", "Büyük (36-45 cm)", "Ekstra Büyük (46 cm ve üstü)"
         ])
-        self.size_entry.setVisible(False)# Initially hidden 
+        self.size_entry.setVisible(False)  # Initially hidden
         self.height_entry = QLineEdit()
-        self.height_entry.setVisible(False)# Initially hidden 
+        self.height_entry.setVisible(False)  # Initially hidden
 
         # Type entry for bags
         self.type_entry = QComboBox()
@@ -74,7 +99,7 @@ class StockManagerApp(QMainWindow):
 
         # Labels
         label_style = "font-weight: bold;"
-
+        
         product_type_label = QLabel("Ürün Türü:")
         product_type_label.setStyleSheet(label_style)
         name_label = QLabel("Ürün Adı:")
@@ -108,6 +133,7 @@ class StockManagerApp(QMainWindow):
         self.form_layout.addRow(height_label, self.height_entry)
         self.form_layout.addRow(type_label, self.type_entry)
 
+        # Add Product Button
         self.add_button = QPushButton("Ürün Ekle")
         self.add_button.clicked.connect(self.add_product)
         self.add_button.setStyleSheet(label_style)
@@ -118,12 +144,12 @@ class StockManagerApp(QMainWindow):
         # Product listing section
         self.table = QTableWidget()
         self.table.setColumnCount(9)
-        self.table.setHorizontalHeaderLabels(["Ürün Adı", "Renk", "Marka", "Stok Kodu", "Tarih", "Stok Miktarı", "Boyut","Uzunluk","Tür"])
-        # Başlıkları kalın yapmak için stil ayarları
+        self.table.setHorizontalHeaderLabels(["Ürün Adı", "Renk", "Marka", "Stok Kodu", "Tarih", "Stok Miktarı", "Boyut", "Uzunluk", "Tür"])
         header = self.table.horizontalHeader()
         header.setStyleSheet("font-weight: bold;")
         self.layout.addWidget(self.table)
 
+        # Update Table Button
         self.update_button = QPushButton("Ürünleri Listele")
         self.update_button.clicked.connect(self.update_table)
         self.layout.addWidget(self.update_button)
@@ -134,6 +160,7 @@ class StockManagerApp(QMainWindow):
         self.type_entry.setVisible(product_type == "Canta")
         self.size_entry.setVisible(product_type == "Bavul")
         self.height_entry.setVisible(product_type == "Kemer")
+
     def add_product(self):
         product_type = self.product_type.currentText()
         name = self.name_entry.text()
@@ -166,7 +193,6 @@ class StockManagerApp(QMainWindow):
         self.stock.add(product)
         QMessageBox.information(self, "Başarı", f"Ürün eklendi: {product}")
 
-
     def update_table(self):
         self.table.setRowCount(0)
         for product in self.stock.products.values():
@@ -190,6 +216,13 @@ class StockManagerApp(QMainWindow):
             elif isinstance(product, Canta):
                 self.table.setItem(row_position, 6, QTableWidgetItem(''))
                 self.table.setItem(row_position, 7, QTableWidgetItem(product.type_))
+    
+    def go_back(self):
+        from MainPage2 import MainApp  # Import inside the function
+        self.main_app = MainApp()  # Initialize the MainApp class
+        self.main_app.show()
+        self.close()
+    
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

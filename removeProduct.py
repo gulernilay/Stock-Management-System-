@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QFormLayout, QMessageBox, QComboBox, QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QLabel,QHBoxLayout, QLineEdit, QPushButton, QFormLayout, QMessageBox, QComboBox, QTableWidget, QTableWidgetItem
 from PyQt5.QtCore import Qt
 from Product import Bavul, Cuzdan, Kemer, Canta
 from Stock import Stock
@@ -21,6 +21,28 @@ class RemoveProduct(QMainWindow):
         self.setCentralWidget(self.central_widget)
         self.layout = QVBoxLayout()
         self.central_widget.setLayout(self.layout)
+
+        # Create horizontal layout for the title and back button
+        self.header_layout = QHBoxLayout()
+        
+        # Title label
+        self.title_label = QLabel("Ürün Silme Ekranı")
+        self.title_label.setStyleSheet("font-size: 22px; font-weight: bold;")
+        self.title_label.setAlignment(Qt.AlignCenter)
+        
+        # Back Button
+        self.back_button = QPushButton("Geri")
+        self.back_button.clicked.connect(self.go_back)
+        self.back_button.setStyleSheet("font-weight: bold;")
+        self.back_button.setMinimumSize(80, 25)  # Minimum Width: 80 pixels, Minimum Height: 25 pixels
+        self.back_button.setMaximumSize(120, 35)  # Maximum Width: 120 pixels, Maximum Height: 35 pixels
+
+        # Add widgets to header layout
+        self.header_layout.addWidget(self.title_label)
+        self.header_layout.addWidget(self.back_button)
+
+        # Add header layout to the main layout
+        self.layout.addLayout(self.header_layout)
 
         # Ürün ekleme bölümü
         self.form_layout = QFormLayout()
@@ -129,6 +151,12 @@ class RemoveProduct(QMainWindow):
             elif isinstance(product, Canta):
                 self.table.setItem(row_position, 6, QTableWidgetItem(''))
                 self.table.setItem(row_position, 7, QTableWidgetItem(product.type))
+
+    def go_back(self):
+        from MainPage2 import MainApp  # Import inside the function
+        self.main_app = MainApp()  # Initialize the MainApp class
+        self.main_app.show()
+        self.close()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

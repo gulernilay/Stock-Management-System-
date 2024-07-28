@@ -6,21 +6,22 @@ from PyQt5.QtCore import Qt
 from MainPage2 import MainApp
 from Product import Bavul,Cuzdan, Kemer,Canta
 from Stock import Stock
-
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFormLayout, QMessageBox
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import Qt
-import sys
+from pymongo import MongoClient
 
 class LoginScreen(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        # MongoDB bağlantısı ve koleksiyon seçimi
+        self.client = MongoClient('mongodb://localhost:27017/')
+        self.db = self.client['gokhancanta']  # MongoDB veritabanı adı
+        self.collection = self.db['Kullanıcılar']  # MongoDB koleksiyon adı
+
         self.setWindowTitle("Gökhan Çanta Stok Yönetim Sistemi")
         self.setGeometry(100, 100, 800, 600)
 
         # Arka plan rengini Goldenrod yap
-        self.setStyleSheet("background-color: #D8BFD8;")
+        self.setStyleSheet("background-color: #E6E6FA;")
 
         # Merkez widget ve layout
         self.central_widget = QWidget()
@@ -29,7 +30,7 @@ class LoginScreen(QMainWindow):
         self.central_widget.setLayout(self.layout)
 
         # Başlık
-        self.title_label = QLabel("GÖKHAN ÇANTA STOK KONTROL YÖNETİM SİSTEMİ")
+        self.title_label = QLabel("GÖKHAN ÇANTA STOK YÖNETİM SİSTEMİ")
         self.title_label.setStyleSheet("font-size: 24px; font-weight: bold; color: black;")
         self.title_label.setAlignment(Qt.AlignCenter)
         self.layout.addWidget(self.title_label)
@@ -59,9 +60,9 @@ class LoginScreen(QMainWindow):
 
         # QLineEdit widget'larının genişliğini resim genişliğiyle aynı olacak şekilde ayarlayın ve siyah çerçeve ekleyin
         self.username_entry.setFixedWidth(pixmap.width())
-        self.username_entry.setStyleSheet("border: 2px solid black;")
+        self.username_entry.setStyleSheet("border: 1px solid black;")
         self.password_entry.setFixedWidth(pixmap.width())
-        self.password_entry.setStyleSheet("border: 2px solid black;")
+        self.password_entry.setStyleSheet("border: 1px solid black;")
 
         # Etiketleri kalın yap
         label_style = "font-weight: bold; color: black; font-size: 14px"
@@ -71,9 +72,9 @@ class LoginScreen(QMainWindow):
         self.form_layout.itemAt(1, QFormLayout.LabelRole).widget().setStyleSheet(label_style)
 
         # Giriş butonunu ekle ve stil ayarlarını yap
-        self.login_button = QPushButton("GİRİŞ")
+        self.login_button = QPushButton("Giriş")
         self.login_button.setFixedWidth(pixmap.width())
-        self.login_button.setStyleSheet("font-weight: bold; color: black; border: 2px solid black;")
+        self.login_button.setStyleSheet("font-weight: bold; color: black; border: 1px solid black;")
         self.login_button.clicked.connect(self.login)
         self.form_layout.addWidget(self.login_button)
 
@@ -92,21 +93,30 @@ class LoginScreen(QMainWindow):
         username = self.username_entry.text()
         password = self.password_entry.text()
 
-        # Basit bir kullanıcı adı ve şifre kontrolü
-        if username == "nilay" and password == "biomedicalcomputer":
+        # User authentication query
+        query = {"username": username, "password": password}
+        user = self.collection.find_one(query)
+        if user:
+            print("Giriş başarılı")
             self.open_main_app()
+            # Additional actions after successful login
         else:
-            QMessageBox.warning(self, "Giriş Hatası", "Kullanıcı adı veya şifre yanlış!")
+            print("Kullanıcı adı veya şifre hatalı")
 
     def open_main_app(self):
-        self.main_app = MainApp()  # Ana uygulama sınıfınızı çağırın
+        self.main_app = MainApp()  # Initialize your main app class
         self.main_app.show()
         self.close()
 
+    def closeEvent(self, event):
+        self.client.close()  # Close MongoDB connection on app exit
+        event.accept()
+
 if __name__ == "__main__":
+    import sys
     app = QApplication(sys.argv)
-    login_screen = LoginScreen()
-    login_screen.show()
+    window = LoginScreen()
+    window.show()
     sys.exit(app.exec_())
 
 """
