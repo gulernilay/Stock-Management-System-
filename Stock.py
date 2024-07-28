@@ -1,5 +1,5 @@
 
-from Product import Suitcase ,Belt,Wallet, Bag
+from Product import Bavul,Canta,Kemer,Cuzdan
 
 
 class Stock :
@@ -28,13 +28,13 @@ class Stock :
             print("Stokta hiç ürün yok.")
         else:
             for product in self.products.values():
-                if isinstance(product, Suitcase):
+                if isinstance(product, Bavul):
                     print(f'("{product.name}", "{product.color}", "{product.brand}", "{product.stock_code}", "{product.date}", {product.stock_amount}, "{product.size}")')
-                elif isinstance(product, Wallet):
+                elif isinstance(product, Cuzdan):
                     print(f'("{product.name}", "{product.color}", "{product.brand}", "{product.stock_code}", "{product.date}", {product.stock_amount})')
-                elif isinstance(product, Belt):
+                elif isinstance(product, Kemer):
                     print(f'("{product.name}", "{product.color}", "{product.brand}", "{product.stock_code}", "{product.date}", {product.stock_amount}, "{product.height}")')
-                elif isinstance(product, Bag):
+                elif isinstance(product, Canta):
                     print(f'("{product.name}", "{product.color}", "{product.brand}", "{product.stock_code}", "{product.date}", {product.stock_amount}, "{product.type}")')
     
   def __str__(self):

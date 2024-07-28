@@ -1,8 +1,10 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QLineEdit, QFormLayout, QMessageBox, QTableWidget, QTableWidgetItem, QDialog
 from PyQt5.QtCore import Qt
-
+from PyQt5.QtGui import QPixmap
 from addProduct import StockManagerApp
+from removeProduct import RemoveProduct
+from showProduct import ShowProduct
 
 class MainApp(QMainWindow):
     def __init__(self):
@@ -17,28 +19,38 @@ class MainApp(QMainWindow):
         self.central_widget.setLayout(self.main_layout)
 
         self.title_label = QLabel("Gökhan Çanta Stok Yönetim Sistemi")
-        self.title_label.setStyleSheet("font-size: 35px; font-weight: bold;")
+        self.title_label.setStyleSheet("font-size: 32px; font-weight: bold;")
         self.title_label.setAlignment(Qt.AlignCenter)
         self.main_layout.addWidget(self.title_label)
 
         self.button_layout = QHBoxLayout()
+        
+        # Resmi ekle ve çerçeve ayarla
+        self.image_label = QLabel()
+        pixmap = QPixmap("C:\\Users\\nilay\\Desktop\\canta.jpeg")
+        pixmap = pixmap.scaled(350, 350, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.image_label.setPixmap(pixmap)
+        self.image_label.setFixedSize(pixmap.size())  # QLabel boyutunu resim boyutuna ayarla
+        self.image_label.setAlignment(Qt.AlignCenter)
+        #self.image_label.setStyleSheet("border: 2px solid black;")  # Siyah çerçeve ekleme
+        self.main_layout.addWidget(self.image_label, alignment=Qt.AlignCenter)  # Düzeltilmiş kısım
 
         # Butonları oluştur
         self.add_product_button = QPushButton("Ürün Ekleme")
-        self.add_product_button.setFixedSize(150, 150)  # Kare buton boyutu
-        self.add_product_button.setStyleSheet("background-color: lightblue; font-weight: bold; font-size: 17px;")
+        self.add_product_button.setFixedSize(200, 150)  # Kare buton boyutu
+        self.add_product_button.setStyleSheet("background-color: lightblue; font-weight: bold; font-size: 17px;border: 2px solid black;")
         self.add_product_button.clicked.connect(self.show_add_product_dialog)
         self.button_layout.addWidget(self.add_product_button)
 
         self.delete_product_button = QPushButton("Ürün Silme")
-        self.delete_product_button.setFixedSize(150, 150)  # Kare buton boyutu
-        self.delete_product_button.setStyleSheet("background-color: lightcoral; font-weight: bold; font-size: 17px;")
+        self.delete_product_button.setFixedSize(200, 150)  # Kare buton boyutu
+        self.delete_product_button.setStyleSheet("background-color: lightcoral; font-weight: bold; font-size: 17px;border: 2px solid black;")
         self.delete_product_button.clicked.connect(self.show_delete_product_dialog)
         self.button_layout.addWidget(self.delete_product_button)
 
-        self.view_stock_button = QPushButton("Stok Görünümü")
-        self.view_stock_button.setFixedSize(150, 150)  # Kare buton boyutu
-        self.view_stock_button.setStyleSheet("background-color: lightgreen; font-weight: bold; font-size: 17px;")
+        self.view_stock_button = QPushButton("Stok Kontrol")
+        self.view_stock_button.setFixedSize(200, 150)  # Kare buton boyutu
+        self.view_stock_button.setStyleSheet("background-color: lightgreen; font-weight: bold; font-size: 17px;border: 2px solid black;")
         self.view_stock_button.clicked.connect(self.show_view_stock_dialog)
         self.button_layout.addWidget(self.view_stock_button)
 
@@ -54,12 +66,14 @@ class MainApp(QMainWindow):
         self.stock_manager_app.show()
 
     def show_delete_product_dialog(self):
-        dialog = DeleteProductDialog(self)
-        dialog.exec_()
+        #dialog = DeleteProductDialog(self)
+        #dialog.exec_()
+        self.remove_product = RemoveProduct(self)
+        self.remove_product.show()
 
     def show_view_stock_dialog(self):
-        dialog = ViewStockDialog(self)
-        dialog.exec_()
+        self.show_product = ShowProduct(self)
+        self.show_product.show()
 
 class DeleteProductDialog(QDialog):
     def __init__(self, parent):

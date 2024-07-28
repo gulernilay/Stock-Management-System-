@@ -15,7 +15,7 @@ class Product:
                 f"Date Added: {self.date}\n"
                 f"Stock Amount: {self.stock_amount} units")
     
-class Suitcase(Product):
+class Bavul(Product):
     def __init__(self, name, color, brand, stock_code, date, stock_amount, size):
         super().__init__(name, color, brand, stock_code, date, stock_amount)
         self.size = size
@@ -24,14 +24,14 @@ class Suitcase(Product):
         return (super().__str__() + 
                 f"\nSize: {self.size}")
  
-class Wallet(Product):
+class Cuzdan(Product):
     def __init__(self, name, color, brand, stock_code, date, stock_amount):
         super().__init__(name, color, brand, stock_code, date, stock_amount)
     
     def __str__(self):
         return super().__str__()
   
-class Belt(Product):
+class Kemer(Product):
     def __init__(self, name, color, brand, stock_code, date, stock_amount, height):
         super().__init__(name, color, brand, stock_code, date, stock_amount)
         self.height = height
@@ -40,7 +40,7 @@ class Belt(Product):
         return (super().__str__() +  
                 f"\nHeight: {self.height}")
 
-class Bag(Product):
+class Canta(Product):
     def __init__(self, name, color, brand, stock_code, date, stock_amount, type_):
         super().__init__(name, color, brand, stock_code, date, stock_amount)
         self.type = type_
